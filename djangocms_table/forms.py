@@ -5,6 +5,7 @@ from djangocms_table.widgets import TableWidget
 from djangocms_table.models import Table
 from django.utils.translation import ugettext_lazy as _
 import csv
+from io import TextIOWrapper
 import json
 
 
@@ -14,7 +15,11 @@ class TableForm(ModelForm):
 
     def clean_csv_upload(self):
         if self.cleaned_data['csv_upload']:
-            csv_reader = csv.reader(self.cleaned_data['csv_upload'], dialect='excel')
+
+            # Make sure we decode the file to text
+            encoding = self.cleaned_data['csv_upload'].charset if self.cleaned_data['csv_upload'].charset else 'utf-8'
+            f = TextIOWrapper(self.cleaned_data['csv_upload'].file, encoding=encoding)
+            csv_reader = csv.reader(f, dialect='excel')
             data = []
             for row in csv_reader:
                 data.append(row)
