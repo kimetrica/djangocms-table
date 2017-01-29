@@ -10,16 +10,14 @@ class TableWidget(Textarea):
     class Media:
         js = [static_url(path) for path in (
                 'js/jquery-1.8.3.min.js',
-                'js/jquery.handsontable.js',
-                'js/jquery.contextMenu.js',
-                'js/jquery.ui.position.js',
-                'js/json2.js',
-                'js/bootstrap-typeahead.js',
-            )]
+                'js/handsontable.full.min.js',
+                'js/cmstable.js',
+              )]
+              
         css = {
             'all': [static_url(path) for path in (
-                'css/jquery.handsontable.css',
-                'css/jquery.contextMenu.css',
+                'css/handsontable.full.min.css',
+                'css/cmstable.css',
             )],
         }
 

@@ -1,0 +1,23 @@
+.handsontable .wtHolder > .wtHider > .wtSpreader {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.handsontable .wtHolder > .wtHider {
+    position: relative;
+    width: 100% !important;
+    height: auto;
+}
+
+.handsontable table.htCore {
+    width: 100%;
+}
+
+.handsontable td.table-head {
+	    font-weight: bold;
+}
+
+.handsontable .htDimmed {
+    color: inherit;
+}

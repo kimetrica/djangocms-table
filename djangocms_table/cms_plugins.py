@@ -32,13 +32,9 @@ class TablePlugin(CMSPluginBase):
     )
 
     def render(self, context, instance, placeholder):
-        try:
-            data = json.loads(instance.table_data)
-        except:
-            data = "error"
         context.update({
             'name': instance.name,
-            'data': data,
+            'data': instance.table_data,
             'instance':instance,
         })
         return context

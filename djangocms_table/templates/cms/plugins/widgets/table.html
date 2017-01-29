@@ -2,72 +2,58 @@
 <script type="text/javascript">
 //<![CDATA]
 
-	(function($) {
+(function($) {
+
+	{% if data %}
+	table_data = {{ data|safe }};
+	{% else %}
+	table_data = {'mergeCells': [], 'cell': []};
+	{% endif %}
+	
+	$('form').on('submit', function(e) {
+	    e.preventDefault();
+    	var data = new Object();
+    	data.data = hot.getData();
+    	data.mergeCells = hot.mergeCells.mergedCellInfoCollection;
+    	data.cell = [];
+    	for(var i = 0; i < hot.countRows(); i++) {
+    		for(var j = 0; j < hot.countCols(); j++) {
+    			var metadata = hot.getCellMeta(i, j);
+    			for (var property in metadata) {
+    				if (metadata.hasOwnProperty(property) && ['className'].indexOf(property) >= 0) {
+    			    	var cell = {'row': i, 'col': j};
+    					cell[property] = metadata[property];
+    					data.cell.push(cell);
+    				}
+    			}    			
+    		}
+    	}
+    	$("#id_{{ name }}").val(JSON.stringify(data));
+	    this.submit();
+	});
 	
 	$(document).ready(function () {
-		{% if data %}var data = {{ data|safe }};{% endif %}
-	   	var headerRenderer = function (instance, td, row, col, prop, value, cellProperties) {
-	  		Handsontable.TextCell.renderer.apply(this, arguments);
-	  		$(td).css({
-	    		'background':'#ccc',
-	    		'font-weight':'bold'
-	  		});
-		};
+		var container = document.getElementById('table');
 		
-		var normalRenderer = function (instance, td, row, col, prop, value, cellProperties) {
-	  		Handsontable.TextCell.renderer.apply(this, arguments);
-	  		$(td).css({
-	    		'background':'white',
-	    		'font-weight':'normal'
-	  		});
-		};
+		headers_top = Number($("#id_headers_top").val());
+		headers_bottom = Number($("#id_headers_bottom").val());
+		headers_left = Number($("#id_headers_left").val());
 
-		var container = $("#table")
-		var top = $("#id_headers_top").val();
-		var left = $("#id_headers_left").val();
-		var bottom = $("#id_headers_bottom").val();
-		
 		$("#id_headers_top").change(function(){
-			top = $(this).val();
-			rowCount = container.data('handsontable').rowCount
-			container.data('handsontable').render()
+			headers_top = Number($("#id_headers_top").val());
+			hot.render();
 		})
 		$("#id_headers_bottom").change(function(){
-			bottom = $(this).val();
-			rowCount = container.data('handsontable').rowCount
-			container.data('handsontable').render()
+			headers_bottom = Number($("#id_headers_bottom").val());
+			hot.render();
 		})
 		$("#id_headers_left").change(function(){
-			left = $(this).val();
-			rowCount = container.data('handsontable').rowCount
-			container.data('handsontable').render()
+			headers_left = Number($("#id_headers_left").val());
+			hot.render();
 		})
 
-	  	container.handsontable({
-		    {% if data %}data: data,{% endif %}
-		    startRows: 5,
-	    	startCols: 5,
-	        rowHeaders: true,
-	    	colHeaders: true,
-		    contextMenu:true,
-		    onChange:function(changes, source){
-		    	$("#id_{{ name }}").val(JSON.stringify($(this).data('handsontable').getData()))
-		    },
-		    cells: function (row, col, prop) {
-		    	if(row < Number(top)){
-		    		return {type: {renderer: headerRenderer}};
-		    	}
-    			if (col < Number(left)) {
-      				return {type: {renderer: headerRenderer}};
-    			}
-    			if(row + Number(bottom) >= rowCount){
-    				return {type: {renderer: headerRenderer}};
-    			}
-    			return {type: {renderer: normalRenderer}};
-  			}
-		});  
-		
-		var rowCount = container.data('handsontable').rowCount
+	    hot = getTable(container, {});	
+  	
 	});	 
 })(jQuery); 
 

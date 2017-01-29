@@ -1,12 +1,34 @@
-<h2>{{ instance.name }}</h2>
+{% load sekizai_tags %}
+{% load staticfiles %}
 
-<table>{% for row in data %}
-	<tr>{% for cell in row %}
-		{% if forloop.parentloop.counter <= instance.headers_top or forloop.counter <= instance.headers_left or forloop.parentloop.revcounter <= instance.headers_bottom %}
-			<th>{%if cell %}{{ cell }}{% endif %}</th>
-		{% else %}
-			<td>{% if cell %}{{ cell }}{% endif %}</td>
-		{% endif %}
-		{% endfor %}
-	</tr>{% endfor %}
-</table>
+{% addtoblock "js" %}<script type="text/javascript" src="{% static 'table/js/handsontable.full.min.js' %}"></script>{% endaddtoblock %}
+{% addtoblock "js" %}<script type="text/javascript" src="{% static 'table/js/cmstable.js' %}"></script>{% endaddtoblock %}
+{% addtoblock "css" %}<link rel="stylesheet" type="text/css" href="{% static 'table/css/handsontable.full.min.css' %}">{% endaddtoblock %}
+{% addtoblock "css" %}<link rel="stylesheet" type="text/css" href="{% static 'table/css/cmstable.css' %}">{% endaddtoblock %}
+{% addtoblock "js" %}
+<script type="text/javascript">
+$(document).ready(function () {
+    var container = document.getElementById('display-table');
+
+	{% if data %}
+	table_data = {{ data|safe }};
+	{% else %}
+	table_data = {'mergeCells': [], 'cell': []};
+	{% endif %}
+	headers_top = {{ instance.headers_top }};
+	headers_left = {{ instance.headers_left }};
+	headers_bottom = {{ instance.headers_bottom }};
+	
+    hot = getTable(container, {
+    	readOnly: true,
+        rowHeaders: false,
+    	colHeaders: false,
+	    contextMenu:false,
+	    disableVisualSelection: true
+	});	
+});
+</script>
+{% endaddtoblock %}
+
+<h2>{{ instance.name }}</h2>
+<div id="display-table"></div>
